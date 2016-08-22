@@ -11,6 +11,36 @@
  *
  */
 
+//TODO ylepsit
+function listener(event) {
+    //alert(event.resource)
+   // console.log(event);
+   // alert(JSON.stringify(event.data));
+    //event.origin || event.originalEvent.origin
+   // alert(event.source)
+    // alert(event.origin);
+    // if ( event.origin !== "http://localhost:8080" )
+    //   return
+    go(event);
+    //document.getElementById("test").innerHTML = "received: "+event.data.b
+
+}
+if (window.addEventListener) {
+    window.addEventListener("message", listener, false)
+} else {
+    attachEvent("onmessage", listener)
+}
+
+
+
+
+function go(event) {
+    alert("lodlive :" + event.data.pozdrav);
+  
+    
+
+}
+
 var debugOn = false;
 (function($, lodLiveProfile) {
 	$.jsonp.setup({
@@ -1136,7 +1166,7 @@ var debugOn = false;
 					// methods.docInfo('', 'close');
 					return false;
 				});
-				$(this).hover(function() {
+				$(this).hover(function () {
 					methods.msg($(this).attr('data-title'), 'show', null, null, $(this).hasClass("inverse"));
 				}, function() {
 					methods.msg(null, 'hide');
@@ -1166,7 +1196,7 @@ var debugOn = false;
 					}
 				});
 
-				$(this).hover(function() {
+				$(this).hover(function () {
 					methods.msg($(this).attr('data-title'), 'show', null, null, $(this).hasClass("inverse"));
 				}, function() {
 					methods.msg(null, 'hide');
@@ -1179,6 +1209,16 @@ var debugOn = false;
 			obj.find(".actionBox[rel=contents]").click(function() {
 				methods.docInfo(obj, 'open');
 			});
+
+            //TODO jina funkce
+			obj.find(".actionBox[rel=returnUri]").click(function () {
+			    // methods.docInfo(obj, 'open');
+			    //$(this).attr('data-title')
+			    var URI = obj.attr('rel');
+			   // alert(JSON.stringify(URI));
+			    window.parent.postMessage(URI, "*");
+			});
+
 			obj.find(".actionBox[rel=tools]").click(function() {
 				if ($(".toolBox:visible").length == 0) {
 					var pos = obj.position();
@@ -1550,7 +1590,6 @@ var debugOn = false;
 				console.debug("formatDoc " + 0);
 				start = new Date().getTime();
 			}
-
 			// recupero il doctype per caricare le configurazioni specifiche
 			var docType = methods.getJsonValue(uris, 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type', 'default');
 			// carico le configurazioni relative allo stile
@@ -1661,8 +1700,8 @@ var debugOn = false;
 			}
 			if (types.length > 0) {
 				var jSection = $("<div class=\"section\"><label data-title=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#type\">type</label><div></div></div>");
-				jSection.find('label').each(function() {
-					$(this).hover(function() {
+				jSection.find('label').each(function () {
+				    $(this).hover(function () {
 						methods.msg($(this).attr('data-title'), 'show');
 					}, function() {
 						methods.msg(null, 'hide');
@@ -1694,7 +1733,7 @@ var debugOn = false;
 
 			if (webLinkResult) {
 				var jWebLinkResult = $(webLinkResult);
-				jWebLinkResult.find('a').each(function() {
+				jWebLinkResult.find('a').each(function () {
 					$(this).hover(function() {
 						methods.msg($(this).attr('data-title'), 'show');
 					}, function() {
@@ -1796,7 +1835,7 @@ var debugOn = false;
 			if (contents.length == 0 && bnodes.length == 0) {
 				var jSection = $("<div class=\"section\"><label data-title=\"" + lang('resourceMissingDoc') + "\"></label><div>" + lang('resourceMissingDoc') + "</div></div><div class=\"separ sprite\"></div>");
 				jSection.find('label').each(function() {
-					$(this).hover(function() {
+				    $(this).hover(function () {
 						methods.msg($(this).attr('data-title'), 'show');
 					}, function() {
 						methods.msg(null, 'hide');
@@ -2045,7 +2084,7 @@ var debugOn = false;
 				'height' : jResult.height() + 5
 			});
 
-			destBox.hover(function() {
+			destBox.hover(function () {
 				methods.msg(jResult.attr("threedots") == '' ? jResult.text() : jResult.attr("threedots") + " \n " + thisUri, 'show', 'fullInfo', containerBox.attr("data-endpoint"));
 			}, function() {
 				methods.msg(null, 'hide');
@@ -2474,6 +2513,18 @@ var debugOn = false;
 					$(this).parent().children('.box').setBackgroundPosition({
 						y : 0
 					});
+				});
+                //TODO co je setBackgroundPosition? asi oznaceni pri najeti
+				obj = $("<div class=\"actionBox returnUri\" rel=\"returnUri\" >&#160;</div>");
+				containerBox.append(obj);
+				obj.hover(function () {
+				    $(this).parent().children('.box').setBackgroundPosition({
+				        y: -260
+				    });
+				}, function () {
+				    $(this).parent().children('.box').setBackgroundPosition({
+				        y: 0
+				    });
 				});
 			}
 			if (debugOn) {

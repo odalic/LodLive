@@ -577,6 +577,14 @@ div#msg .separ.inverse {
 	font-size: 11px;
 	line-height: 20px;
 }
+/* TODO jiny obrazek a pozice  */
+.actionBox.returnUri {
+	left: 117px;
+	top: 31px;
+    z-index: 20;
+   	background-image: url(../img/sprite-legenda.png);
+ 
+}
 
 .actionBox.contents {
 	left: 97px;
