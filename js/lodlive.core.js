@@ -11,35 +11,27 @@
  *
  */
 
-//TODO ylepsit
-function listener(event) {
-    //alert(event.resource)
-   // console.log(event);
-   // alert(JSON.stringify(event.data));
-    //event.origin || event.originalEvent.origin
-   // alert(event.source)
-    // alert(event.origin);
-    // if ( event.origin !== "http://localhost:8080" )
-    //   return
-    go(event);
-    //document.getElementById("test").innerHTML = "received: "+event.data.b
-
-}
-if (window.addEventListener) {
-    window.addEventListener("message", listener, false)
-} else {
-    attachEvent("onmessage", listener)
-}
-
-
-
-
-function go(event) {
-    alert("lodlive :" + event.data.pozdrav);
+////Odalic - TODO chybi kontrola
+//function listener(event) {
   
-    
+//    // if ( event.origin !== "http://localhost:8080" )
+//    //   return
+//    go(event);
+//    //document.getElementById("test").innerHTML = "received: "+event.data.b
 
-}
+//}
+
+////Odalic - sets listener
+//if (window.addEventListener) {
+//    window.addEventListener("message", listener, false)
+//} else {
+//    attachEvent("onmessage", listener)
+//}
+
+//function go(event) {
+//    alert("lodlive :" + event.data.pozdrav);    
+
+//}
 
 var debugOn = false;
 (function($, lodLiveProfile) {
@@ -382,6 +374,8 @@ var debugOn = false;
 				panel.append('<div class="panel options sprite" ></div>');
 				panel.append('<div class="panel legend sprite" ></div>');
 				panel.append('<div class="panel help sprite" ></div>');
+                //Odalic - iframe exit button
+				panel.append('<div class="panel exit sprite" ></div>');
 				panel.append('<div class="panel" ></div>');
 				panel.append('<div class="panel2 maps sprite" ></div>');
 				panel.append('<div class="panel2 images sprite" ></div>');
@@ -395,6 +389,24 @@ var debugOn = false;
 						y : -400
 					});
 				});
+
+                //Odalic - left side panel - sets pictures of exit button
+				panel.children('.exit').hover(function () {
+				    $(this).setBackgroundPosition({
+				        y: -550
+				    });
+				}, function () {
+				    $(this).setBackgroundPosition({
+				        y: -500
+				    });
+				});
+
+			    //Odalic - sends message to close this iframe with exit button
+				panel.children('.exit').click(function()
+				{
+				    var message = { action: "close", data: "" }
+				    window.parent.postMessage(message, "*");
+				})
 
 				context.append(panel);
 
@@ -1210,13 +1222,12 @@ var debugOn = false;
 				methods.docInfo(obj, 'open');
 			});
 
-            //TODO jina funkce
+		    //Odalic - sends message with chosen url into odalic
+			//TODO label ???
 			obj.find(".actionBox[rel=returnUri]").click(function () {
-			    // methods.docInfo(obj, 'open');
-			    //$(this).attr('data-title')
-			    var URI = obj.attr('rel');
-			   // alert(JSON.stringify(URI));
-			    window.parent.postMessage(URI, "*");
+			    var url = obj.attr('rel');
+			    var message = { action: "returnUrl", data: url }
+			    window.parent.postMessage(message, "*");
 			});
 
 			obj.find(".actionBox[rel=tools]").click(function() {
@@ -2514,15 +2525,18 @@ var debugOn = false;
 						y : 0
 					});
 				});
-                //TODO co je setBackgroundPosition? asi oznaceni pri najeti
+
+			    // Odalic - button sends chosen classification/disambiguation
 				obj = $("<div class=\"actionBox returnUri\" rel=\"returnUri\" >&#160;</div>");
 				containerBox.append(obj);
+
+               // Odalic - sets right pictures from OdalicIcons.png
 				obj.hover(function () {
-				    $(this).parent().children('.box').setBackgroundPosition({
-				        y: -260
+				    $(this).parent().children('.returnUri').setBackgroundPosition({
+				        y: -20
 				    });
 				}, function () {
-				    $(this).parent().children('.box').setBackgroundPosition({
+				    $(this).parent().children('.returnUri').setBackgroundPosition({
 				        y: 0
 				    });
 				});
