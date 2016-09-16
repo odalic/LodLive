@@ -158,6 +158,12 @@ body {
 	cursor: pointer;
 }
 
+/*Odalic - button removes iframe*/
+#controlPanel .panel.exit {
+	background-position: -655px -500px;
+	cursor: pointer;
+}
+
 #panelContent .videoHelp {
 	display: block;
 	margin-left: 67px;
@@ -576,6 +582,13 @@ div#msg .separ.inverse {
 	text-align: center;
 	font-size: 11px;
 	line-height: 20px;
+}
+/* Odalic - button sends chosen classification/disambiguation */
+.actionBox.returnUri {
+	left: 112px;
+	top: 35px;
+    z-index: 200;
+    background-image: url(../img/odalicIcons.png);
 }
 
 .actionBox.contents {

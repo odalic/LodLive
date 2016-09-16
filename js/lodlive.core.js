@@ -11,6 +11,28 @@
  *
  */
 
+////Odalic - TODO chybi kontrola
+//function listener(event) {
+  
+//    // if ( event.origin !== "http://localhost:8080" )
+//    //   return
+//    go(event);
+//    //document.getElementById("test").innerHTML = "received: "+event.data.b
+
+//}
+
+////Odalic - sets listener
+//if (window.addEventListener) {
+//    window.addEventListener("message", listener, false)
+//} else {
+//    attachEvent("onmessage", listener)
+//}
+
+//function go(event) {
+//    alert("lodlive :" + event.data.pozdrav);    
+
+//}
+
 var debugOn = false;
 (function($, lodLiveProfile) {
 	$.jsonp.setup({
@@ -352,6 +374,8 @@ var debugOn = false;
 				panel.append('<div class="panel options sprite" ></div>');
 				panel.append('<div class="panel legend sprite" ></div>');
 				panel.append('<div class="panel help sprite" ></div>');
+                //Odalic - iframe exit button
+				panel.append('<div class="panel exit sprite" ></div>');
 				panel.append('<div class="panel" ></div>');
 				panel.append('<div class="panel2 maps sprite" ></div>');
 				panel.append('<div class="panel2 images sprite" ></div>');
@@ -365,6 +389,24 @@ var debugOn = false;
 						y : -400
 					});
 				});
+
+                //Odalic - left side panel - sets pictures of exit button
+				panel.children('.exit').hover(function () {
+				    $(this).setBackgroundPosition({
+				        y: -550
+				    });
+				}, function () {
+				    $(this).setBackgroundPosition({
+				        y: -500
+				    });
+				});
+
+			    //Odalic - sends message to close this iframe with exit button
+				panel.children('.exit').click(function()
+				{
+				    var message = { action: "close", data: "" }
+				    window.parent.postMessage(message, "*");
+				})
 
 				context.append(panel);
 
@@ -1136,7 +1178,7 @@ var debugOn = false;
 					// methods.docInfo('', 'close');
 					return false;
 				});
-				$(this).hover(function() {
+				$(this).hover(function () {
 					methods.msg($(this).attr('data-title'), 'show', null, null, $(this).hasClass("inverse"));
 				}, function() {
 					methods.msg(null, 'hide');
@@ -1166,7 +1208,7 @@ var debugOn = false;
 					}
 				});
 
-				$(this).hover(function() {
+				$(this).hover(function () {
 					methods.msg($(this).attr('data-title'), 'show', null, null, $(this).hasClass("inverse"));
 				}, function() {
 					methods.msg(null, 'hide');
@@ -1179,6 +1221,15 @@ var debugOn = false;
 			obj.find(".actionBox[rel=contents]").click(function() {
 				methods.docInfo(obj, 'open');
 			});
+
+		    //Odalic - sends message with chosen url into odalic
+			//TODO label ???
+			obj.find(".actionBox[rel=returnUri]").click(function () {
+			    var url = obj.attr('rel');
+			    var message = { action: "returnUrl", data: url }
+			    window.parent.postMessage(message, "*");
+			});
+
 			obj.find(".actionBox[rel=tools]").click(function() {
 				if ($(".toolBox:visible").length == 0) {
 					var pos = obj.position();
@@ -1550,7 +1601,6 @@ var debugOn = false;
 				console.debug("formatDoc " + 0);
 				start = new Date().getTime();
 			}
-
 			// recupero il doctype per caricare le configurazioni specifiche
 			var docType = methods.getJsonValue(uris, 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type', 'default');
 			// carico le configurazioni relative allo stile
@@ -1661,8 +1711,8 @@ var debugOn = false;
 			}
 			if (types.length > 0) {
 				var jSection = $("<div class=\"section\"><label data-title=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#type\">type</label><div></div></div>");
-				jSection.find('label').each(function() {
-					$(this).hover(function() {
+				jSection.find('label').each(function () {
+				    $(this).hover(function () {
 						methods.msg($(this).attr('data-title'), 'show');
 					}, function() {
 						methods.msg(null, 'hide');
@@ -1694,7 +1744,7 @@ var debugOn = false;
 
 			if (webLinkResult) {
 				var jWebLinkResult = $(webLinkResult);
-				jWebLinkResult.find('a').each(function() {
+				jWebLinkResult.find('a').each(function () {
 					$(this).hover(function() {
 						methods.msg($(this).attr('data-title'), 'show');
 					}, function() {
@@ -1796,7 +1846,7 @@ var debugOn = false;
 			if (contents.length == 0 && bnodes.length == 0) {
 				var jSection = $("<div class=\"section\"><label data-title=\"" + lang('resourceMissingDoc') + "\"></label><div>" + lang('resourceMissingDoc') + "</div></div><div class=\"separ sprite\"></div>");
 				jSection.find('label').each(function() {
-					$(this).hover(function() {
+				    $(this).hover(function () {
 						methods.msg($(this).attr('data-title'), 'show');
 					}, function() {
 						methods.msg(null, 'hide');
@@ -2045,7 +2095,7 @@ var debugOn = false;
 				'height' : jResult.height() + 5
 			});
 
-			destBox.hover(function() {
+			destBox.hover(function () {
 				methods.msg(jResult.attr("threedots") == '' ? jResult.text() : jResult.attr("threedots") + " \n " + thisUri, 'show', 'fullInfo', containerBox.attr("data-endpoint"));
 			}, function() {
 				methods.msg(null, 'hide');
@@ -2474,6 +2524,21 @@ var debugOn = false;
 					$(this).parent().children('.box').setBackgroundPosition({
 						y : 0
 					});
+				});
+
+			    // Odalic - button sends chosen classification/disambiguation
+				obj = $("<div class=\"actionBox returnUri\" rel=\"returnUri\" >&#160;</div>");
+				containerBox.append(obj);
+
+               // Odalic - sets right pictures from OdalicIcons.png
+				obj.hover(function () {
+				    $(this).parent().children('.returnUri').setBackgroundPosition({
+				        y: -20
+				    });
+				}, function () {
+				    $(this).parent().children('.returnUri').setBackgroundPosition({
+				        y: 0
+				    });
 				});
 			}
 			if (debugOn) {
