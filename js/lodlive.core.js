@@ -1223,11 +1223,45 @@ var debugOn = false;
 			});
 
 		    //Odalic - sends message with chosen url into odalic
-			//TODO label ???
 			obj.find(".actionBox[rel=returnUri]").click(function () {
 			    var url = obj.attr('rel');
-			    var message = { action: "returnUrl", data: url }
-			    window.parent.postMessage(message, "*");
+				var label = "";
+				var SPARQLquery = methods.composeQuery(url, 'document');
+
+				var values = [];
+
+				$.jsonp({
+					url : SPARQLquery,
+
+					success : function(json) {
+						json = json['results']['bindings'];
+						$.each(json, function(key, value) {
+							if (value.object.type != 'uri' && value.object.type != 'bnode') {
+								var shortKey  =  value['property']['value'];
+
+								//code removes insignificant part of the URL, because we need the url end
+								while (shortKey.indexOf('/') > -1) {
+									shortKey = shortKey.substring(shortKey.indexOf('/') + 1);
+								}
+								while (shortKey.indexOf('#') > -1) {
+									shortKey = shortKey.substring(shortKey.indexOf('#') + 1);
+								}
+								//label is set the first value which matches  url with "label"
+								if(shortKey == "label" && label==""){
+									label = value.object.value;
+								}
+							}
+						});
+
+						var message = { action: "returnUrl", data: url, label: label };
+						window.parent.postMessage(message, "*");
+					},
+					error : function(e, b, v) {
+
+						var message = { action: "returnUrl", data: url, label: label };
+						window.parent.postMessage(message, "*");
+					}
+				});
 			});
 
 			obj.find(".actionBox[rel=tools]").click(function() {
